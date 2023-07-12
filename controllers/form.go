@@ -51,8 +51,9 @@ func (c *formController) GetAll(ctx *fiber.Ctx) error {
 }
 
 func (c *formController) GetOne(ctx *fiber.Ctx) error {
-	form, err := c.formRepo.GetOne(ctx.Context(), ctx.Params("id"))
-	
+	id, _ := primitive.ObjectIDFromHex(ctx.Params("id"))
+
+	form, err := c.formRepo.GetOne(ctx.Context(), id)
 	if err != nil {
 		return ctx.Status(404).JSON(fiber.Map{
 			"message": "Form not found",
