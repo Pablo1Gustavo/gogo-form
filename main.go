@@ -12,12 +12,18 @@ func main() {
 	app := fiber.New()
 
 	formController := controllers.NewFormController()
-
 	formRoutes := app.Group("form")
 	{
-		formRoutes.Get("", formController.GetAll)
 		formRoutes.Post("", formController.Create)
+		formRoutes.Get("", formController.GetAll)
 		formRoutes.Get(":id", formController.GetOne)
+	}
+	
+	answerController := controllers.NewAnswerController()
+	answerRoutes := app.Group("answer")
+	{
+		answerRoutes.Post(":formId", answerController.Create)
+		answerRoutes.Get("", answerController.GetAll)
 	}
 
 	app.Listen(":3000")
