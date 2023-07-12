@@ -28,7 +28,7 @@ func (c *formController) Create(ctx *fiber.Ctx) error {
 
 	form.ID = primitive.NewObjectID()
 
-	_, err := c.formRepo.Create(*form)
+	_, err := c.formRepo.Create(ctx.Context(), *form)
 	if err != nil {
 		return ctx.Status(500).JSON(fiber.Map{
 			"message": "Could not create form",
@@ -39,7 +39,7 @@ func (c *formController) Create(ctx *fiber.Ctx) error {
 }
 
 func (c *formController) GetAll(ctx *fiber.Ctx) error {
-	forms, err := c.formRepo.GetAll()
+	forms, err := c.formRepo.GetAll(ctx.Context())
 
 	if err != nil {
 		return ctx.Status(500).JSON(fiber.Map{
@@ -47,5 +47,5 @@ func (c *formController) GetAll(ctx *fiber.Ctx) error {
 		})
 	}
 
-	return ctx.Status(202).JSON(forms)
+	return ctx.Status(200).JSON(forms)
 }

@@ -14,8 +14,11 @@ func main() {
 
 	formController := controllers.NewFormController()
 
-	app.Get("", formController.GetAll)
-	app.Post("", formController.Create)
+	formRoutes := app.Group("form")
+	{
+		formRoutes.Get("", formController.GetAll)
+		formRoutes.Post("", formController.Create)
+	}
 
 	app.Listen(":3000")
 }
