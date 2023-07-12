@@ -31,7 +31,7 @@ func (c *formController) Create(ctx *fiber.Ctx) error {
 	_, err := c.formRepo.Create(ctx.Context(), *form)
 	if err != nil {
 		return ctx.Status(500).JSON(fiber.Map{
-			"message": "Could not create form",
+			"message": "Could not create the form",
 		})
 	}
 
@@ -43,9 +43,21 @@ func (c *formController) GetAll(ctx *fiber.Ctx) error {
 
 	if err != nil {
 		return ctx.Status(500).JSON(fiber.Map{
-			"error": "Unexpected error during get forms",
+			"message": "Unexpected error during get forms",
 		})
 	}
 
 	return ctx.Status(200).JSON(forms)
+}
+
+func (c *formController) GetOne(ctx *fiber.Ctx) error {
+	form, err := c.formRepo.GetOne(ctx.Context(), ctx.Params("id"))
+	
+	if err != nil {
+		return ctx.Status(404).JSON(fiber.Map{
+			"message": "Form not found",
+		})
+	}
+
+	return ctx.Status(200).JSON(form)
 }

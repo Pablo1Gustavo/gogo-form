@@ -41,3 +41,19 @@ func (repo *FormRepository) GetAll(ctx context.Context) ([]models.Form, error) {
 
 	return forms, nil
 }
+
+func (repo *FormRepository) GetOne(ctx context.Context, id string) (*models.Form, error) {
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+
+	var form models.Form
+
+	if err = repo.collection.FindOne(ctx, bson.M{"_id": objectID}).Decode(&form); err != nil {
+		return nil, err
+	}
+
+	return &form, nil
+}
+
