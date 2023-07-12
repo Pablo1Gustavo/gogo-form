@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"gogo-form/database"
@@ -36,4 +37,14 @@ func (repo *AnswerRepository) GetAll(ctx context.Context) ([]models.Answer, erro
 	}
 
 	return answers, nil
+}
+
+func (repo *AnswerRepository) GetOne(ctx context.Context, id primitive.ObjectID) (*models.Answer, error) {
+	var answer models.Answer
+
+	if err := repo.collection.FindOne(ctx, bson.M{"_id": id}).Decode(&answer); err != nil {
+		return nil, err
+	}
+
+	return &answer, nil
 }

@@ -67,3 +67,16 @@ func (c *AnswerController) GetAll(ctx *fiber.Ctx) error {
 
 	return ctx.Status(200).JSON(forms)
 }
+
+func (c *AnswerController) GetOne(ctx *fiber.Ctx) error {
+	id, _ := primitive.ObjectIDFromHex(ctx.Params("id"))
+
+	answer, err := c.answerRepo.GetOne(ctx.Context(), id)
+	if err != nil {
+		return ctx.Status(404).JSON(fiber.Map{
+			"message": "Form not found",
+		})
+	}
+
+	return ctx.Status(200).JSON(answer)
+}

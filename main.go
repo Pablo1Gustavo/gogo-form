@@ -24,6 +24,7 @@ func main() {
 	{
 		answerRoutes.Post(":formId", answerController.Create)
 		answerRoutes.Get("", answerController.GetAll)
+		answerRoutes.Get(":id", answerController.GetOne)
 	}
 
 	app.Listen(":3000")
