@@ -1,4 +1,4 @@
-package controllers
+package handlers
 
 import (
 	"time"
@@ -10,18 +10,17 @@ import (
 	"gogo-form/repository"
 )
 
-type AnswerController struct {
+type AnswerHandler struct {
 	answerRepo *repository.AnswerRepository
 }
 
-func NewAnswerController() AnswerController {
-	answerRepo := repository.NewAnswerRepository()
-	return AnswerController{answerRepo}
+func NewAnswerHandler() AnswerHandler {
+	return AnswerHandler{repository.NewAnswerRepository()}
 }
 
 type Answers []interface{}
 
-func (c *AnswerController) Create(ctx *fiber.Ctx) error {
+func (h *AnswerHandler) Create(ctx *fiber.Ctx) error {
 	var answers Answers
 
 	if err := ctx.BodyParser(&answers); err != nil {
@@ -46,7 +45,7 @@ func (c *AnswerController) Create(ctx *fiber.Ctx) error {
 		Answers:   answers,
 	}
 
-	_, err = c.answerRepo.Create(ctx.Context(), answer)
+	_, err = h.answerRepo.Create(ctx.Context(), answer)
 	if err != nil {
 		return ctx.Status(500).JSON(fiber.Map{
 			"message": "Could not create answer",
@@ -56,8 +55,8 @@ func (c *AnswerController) Create(ctx *fiber.Ctx) error {
 	return ctx.Status(202).JSON(answer)
 }
 
-func (c *AnswerController) GetAll(ctx *fiber.Ctx) error {
-	forms, err := c.answerRepo.GetAll(ctx.Context())
+func (h *AnswerHandler) GetAll(ctx *fiber.Ctx) error {
+	forms, err := h.answerRepo.GetAll(ctx.Context())
 
 	if err != nil {
 		return ctx.Status(500).JSON(fiber.Map{
@@ -68,10 +67,10 @@ func (c *AnswerController) GetAll(ctx *fiber.Ctx) error {
 	return ctx.Status(200).JSON(forms)
 }
 
-func (c *AnswerController) GetOne(ctx *fiber.Ctx) error {
+func (h *AnswerHandler) GetOne(ctx *fiber.Ctx) error {
 	id, _ := primitive.ObjectIDFromHex(ctx.Params("id"))
 
-	answer, err := c.answerRepo.GetOne(ctx.Context(), id)
+	answer, err := h.answerRepo.GetOne(ctx.Context(), id)
 	if err != nil {
 		return ctx.Status(404).JSON(fiber.Map{
 			"message": "Form not found",

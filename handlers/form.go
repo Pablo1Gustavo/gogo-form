@@ -1,4 +1,4 @@
-package controllers
+package handlers
 
 import (
 	"github.com/gofiber/fiber/v2"
@@ -8,16 +8,15 @@ import (
 	"gogo-form/repository"
 )
 
-type formController struct {
+type FormHandler struct {
 	formRepo *repository.FormRepository
 }
 
-func NewFormController() formController  {
-	formRepo := repository.NewFormRepository()
-	return formController{formRepo}
+func NewFormHandler() FormHandler  {
+	return FormHandler{repository.NewFormRepository()}
 }
 
-func (c *formController) Create(ctx *fiber.Ctx) error {
+func (h *FormHandler) Create(ctx *fiber.Ctx) error {
 	form := new(models.Form)
 	
 	if err := ctx.BodyParser(form); err != nil {
@@ -28,7 +27,7 @@ func (c *formController) Create(ctx *fiber.Ctx) error {
 
 	form.ID = primitive.NewObjectID()
 
-	_, err := c.formRepo.Create(ctx.Context(), *form)
+	_, err := h.formRepo.Create(ctx.Context(), *form)
 	if err != nil {
 		return ctx.Status(500).JSON(fiber.Map{
 			"message": "Could not create the form",
@@ -38,8 +37,8 @@ func (c *formController) Create(ctx *fiber.Ctx) error {
 	return ctx.Status(202).JSON(form)
 }
 
-func (c *formController) GetAll(ctx *fiber.Ctx) error {
-	forms, err := c.formRepo.GetAll(ctx.Context())
+func (h *FormHandler) GetAll(ctx *fiber.Ctx) error {
+	forms, err := h.formRepo.GetAll(ctx.Context())
 
 	if err != nil {
 		return ctx.Status(500).JSON(fiber.Map{
@@ -50,10 +49,10 @@ func (c *formController) GetAll(ctx *fiber.Ctx) error {
 	return ctx.Status(200).JSON(forms)
 }
 
-func (c *formController) GetOne(ctx *fiber.Ctx) error {
+func (h *FormHandler) GetOne(ctx *fiber.Ctx) error {
 	id, _ := primitive.ObjectIDFromHex(ctx.Params("id"))
 
-	form, err := c.formRepo.GetOne(ctx.Context(), id)
+	form, err := h.formRepo.GetOne(ctx.Context(), id)
 	if err != nil {
 		return ctx.Status(404).JSON(fiber.Map{
 			"message": "Form not found",

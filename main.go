@@ -1,8 +1,8 @@
 package main
 
 import (
-	"gogo-form/controllers"
 	"gogo-form/database"
+	"gogo-form/handlers"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -11,20 +11,20 @@ func main() {
 	database.InitDB()
 	app := fiber.New()
 
-	formController := controllers.NewFormController()
+	formHandler := handlers.NewFormHandler()
 	formRoutes := app.Group("form")
 	{
-		formRoutes.Post("", formController.Create)
-		formRoutes.Get("", formController.GetAll)
-		formRoutes.Get(":id", formController.GetOne)
+		formRoutes.Post("", formHandler.Create)
+		formRoutes.Get("", formHandler.GetAll)
+		formRoutes.Get(":id", formHandler.GetOne)
 	}
 	
-	answerController := controllers.NewAnswerController()
+	answerHandler := handlers.NewAnswerHandler()
 	answerRoutes := app.Group("answer")
 	{
-		answerRoutes.Post(":formId", answerController.Create)
-		answerRoutes.Get("", answerController.GetAll)
-		answerRoutes.Get(":id", answerController.GetOne)
+		answerRoutes.Post(":formId", answerHandler.Create)
+		answerRoutes.Get("", answerHandler.GetAll)
+		answerRoutes.Get(":id", answerHandler.GetOne)
 	}
 
 	app.Listen(":3000")
