@@ -1,6 +1,8 @@
 package models
 
 import (
+	"gogo-form/domain"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -15,4 +17,22 @@ type Form struct {
 	Name        string             `bson:"name" json:"name"`
 	Description string             `bson:"description" json:"description"`
 	Questions   []Question         `bson:"questions" json:"questions"`
+}
+
+func (f *Form) ToEntity() domain.Form {
+	questions := make([]domain.Question, len(f.Questions))
+	for i, question := range f.Questions {
+		questions[i] = domain.Question{
+			Text: 		question.Text,
+			Type: 		question.Type,
+			Options: 	question.Options,
+		}
+	}
+
+    return domain.Form{
+		ID:          f.ID.Hex(),
+		Name:        f.Name,
+		Description: f.Description,
+		Questions:   questions,
+	}
 }
