@@ -28,7 +28,7 @@ func (h *AnswerHandler) Create(ctx *fiber.Ctx) error {
 
 	formID := ctx.Params("formId")
 
-	_, err := repository.NewFormRepository().GetOne(ctx.Context(), formID)
+	form, err := repository.NewFormRepository().GetOne(ctx.Context(), formID)
 	if err != nil {
 		return ctx.Status(404).JSON(fiber.Map{
 			"message": "Form not found",
@@ -39,6 +39,12 @@ func (h *AnswerHandler) Create(ctx *fiber.Ctx) error {
 		FormID:    formID,
 		AnsweredAt: time.Now(),
 		Answers:   answers,
+	}
+
+	if !formAnswer.CompatibleWithForm(form) {
+		return ctx.Status(422).JSON(fiber.Map{
+			"message": "The response is not compatible with the form.",
+		})
 	}
 
 	formAnswer, err = h.answerRepo.Create(ctx.Context(), formAnswer)

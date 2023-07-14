@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 
 	"gogo-form/domain"
+	"gogo-form/helpers"
 	"gogo-form/repository"
 )
 
@@ -22,6 +23,10 @@ func (h *FormHandler) Create(ctx *fiber.Ctx) error {
 		return ctx.Status(400).JSON(fiber.Map{
 			"message": "Cannot parse JSON",
 		})
+	}
+
+	if errors := helpers.ValidateStruct(*form); errors != nil {
+		return ctx.Status(422).JSON(errors)
 	}
 
 	_, err := h.formRepo.Create(ctx.Context(), *form)
