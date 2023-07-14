@@ -2,9 +2,8 @@ package handlers
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 
-	"gogo-form/models"
+	"gogo-form/domain"
 	"gogo-form/repository"
 )
 
@@ -17,15 +16,13 @@ func NewFormHandler() FormHandler  {
 }
 
 func (h *FormHandler) Create(ctx *fiber.Ctx) error {
-	form := new(models.Form)
+	form := new(domain.Form)
 	
 	if err := ctx.BodyParser(form); err != nil {
 		return ctx.Status(400).JSON(fiber.Map{
 			"message": "Cannot parse JSON",
 		})
 	}
-
-	form.ID = primitive.NewObjectID()
 
 	_, err := h.formRepo.Create(ctx.Context(), *form)
 	if err != nil {
@@ -38,7 +35,7 @@ func (h *FormHandler) Create(ctx *fiber.Ctx) error {
 }
 
 func (h *FormHandler) GetAll(ctx *fiber.Ctx) error {
-	forms, err := h.formRepo.GetAll(ctx.Context())
+	forms, err := h.formRepo.GetAll(ctx.Context(), ctx.Query("name"))
 
 	if err != nil {
 		return ctx.Status(500).JSON(fiber.Map{
@@ -50,9 +47,8 @@ func (h *FormHandler) GetAll(ctx *fiber.Ctx) error {
 }
 
 func (h *FormHandler) GetOne(ctx *fiber.Ctx) error {
-	id, _ := primitive.ObjectIDFromHex(ctx.Params("id"))
-
-	form, err := h.formRepo.GetOne(ctx.Context(), id)
+	form, err := h.formRepo.GetOne(ctx.Context(), ctx.Params("id"))
+	
 	if err != nil {
 		return ctx.Status(404).JSON(fiber.Map{
 			"message": "Form not found",
