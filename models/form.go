@@ -37,18 +37,18 @@ func (f *Form) ToEntity() domain.Form {
 	}
 }
 
-func (f *Form) FromEntity(e domain.Form) error {
-    id, err := primitive.ObjectIDFromHex(e.ID)
+func (f *Form) FromEntity(entity domain.Form) error {
+    id, err := primitive.ObjectIDFromHex(entity.ID)
     if err != nil {
         return err
     }
 	
     f.ID = id
-    f.Name = e.Name
-    f.Description = e.Description
+    f.Name = entity.Name
+    f.Description = entity.Description
 
-    f.Questions = make([]Question, len(e.Questions))
-    for i, question := range e.Questions {
+    f.Questions = make([]Question, len(entity.Questions))
+    for i, question := range entity.Questions {
         f.Questions[i] = Question{
             Text:    question.Text,
             Type:    question.Type,
