@@ -4,22 +4,29 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"github.com/joho/godotenv"
 )
 
 var DB *mongo.Database
 const timeoutTime = 10 * time.Second
 
 func InitDB() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+
 	connectionURI := fmt.Sprintf(
 		"mongodb://%s:%s@%s:%s",
-		"root",
-		"example",
-		"127.0.0.1",
-		"27017")
+		os.Getenv("DATABASE_USER"),
+		os.Getenv("DATABASE_PASS"),
+		os.Getenv("DATABASE_HOST"),
+		os.Getenv("DATABASE_PORT"))
 		
 	clientOpts := options.Client().ApplyURI(connectionURI)
 
