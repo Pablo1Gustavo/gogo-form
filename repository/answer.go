@@ -8,6 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"gogo-form/database"
+	"gogo-form/domain"
 	"gogo-form/models"
 )
 
@@ -20,31 +21,59 @@ func NewAnswerRepository() *AnswerRepository {
 	return &AnswerRepository{collection}
 }
 
-func (repo *AnswerRepository) Create(ctx context.Context, answer models.Answer) (*mongo.InsertOneResult, error) {
-	return repo.collection.InsertOne(ctx, answer)
+func (repo *AnswerRepository) Create(ctx context.Context, answer domain.Answer) (domain.Answer, error) {
+	answer.ID = primitive.NewObjectID().Hex()
+
+	modelAnswer := new(models.Answer)
+	if err := modelAnswer.FromEntity(answer); err != nil {
+		return answer, err
+	}
+
+	_, err := repo.collection.InsertOne(ctx, modelAnswer)
+	if err != nil {
+		return answer, err
+	}
+
+	return answer, nil
 }
 
-func (repo *AnswerRepository) GetAll(ctx context.Context) ([]models.Answer, error) {
+func (repo *AnswerRepository) GetAll(ctx context.Context) ([]domain.Answer, error) {
 	cursor, err := repo.collection.Find(ctx, bson.M{})
 	if err != nil {
 		return nil, err
 	}
 	defer cursor.Close(ctx)
 
-	answers := make([]models.Answer, 0)
-	if err = cursor.All(ctx, &answers); err != nil {
+	answers := make([]domain.Answer, 0)
+	var modelAnswer models.Answer
+
+	for cursor.Next(ctx) {
+		err := cursor.Decode(&modelAnswer)
+		if err != nil {
+			return nil, err
+		}
+		answers = append(answers, modelAnswer.ToEntity())
+	}
+
+	if err := cursor.Err(); err != nil {
 		return nil, err
 	}
 
 	return answers, nil
 }
 
-func (repo *AnswerRepository) GetOne(ctx context.Context, id primitive.ObjectID) (*models.Answer, error) {
+func (repo *AnswerRepository) GetOne(ctx context.Context, id string) (domain.Answer, error) {
 	var answer models.Answer
 
-	if err := repo.collection.FindOne(ctx, bson.M{"_id": id}).Decode(&answer); err != nil {
-		return nil, err
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return domain.Answer{}, err
+	}
+	
+	err = repo.collection.FindOne(ctx, bson.M{"_id": objID}).Decode(&answer)
+	if err != nil {
+		return domain.Answer{}, err
 	}
 
-	return &answer, nil
+	return answer.ToEntity(), nil
 }

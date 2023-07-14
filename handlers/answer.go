@@ -4,9 +4,8 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 
-	"gogo-form/models"
+	"gogo-form/domain"
 	"gogo-form/repository"
 )
 
@@ -18,10 +17,8 @@ func NewAnswerHandler() AnswerHandler {
 	return AnswerHandler{repository.NewAnswerRepository()}
 }
 
-type Answers []interface{}
-
 func (h *AnswerHandler) Create(ctx *fiber.Ctx) error {
-	var answers Answers
+	var answers []interface{}
 
 	if err := ctx.BodyParser(&answers); err != nil {
 		return ctx.Status(400).JSON(fiber.Map{
@@ -29,34 +26,33 @@ func (h *AnswerHandler) Create(ctx *fiber.Ctx) error {
 		})
 	}
 
-	formId, _ := primitive.ObjectIDFromHex(ctx.Params("formId"))
+	formID := ctx.Params("formId")
 
-	_, err := repository.NewFormRepository().GetOne(ctx.Context(), formId)
+	_, err := repository.NewFormRepository().GetOne(ctx.Context(), formID)
 	if err != nil {
 		return ctx.Status(404).JSON(fiber.Map{
 			"message": "Form not found",
 		})
 	}
 
-	answer := models.Answer{
-		ID:        primitive.NewObjectID(),
-		FormID:    formId,
+	formAnswer := domain.Answer{
+		FormID:    formID,
 		AnsweredAt: time.Now(),
 		Answers:   answers,
 	}
 
-	_, err = h.answerRepo.Create(ctx.Context(), answer)
+	formAnswer, err = h.answerRepo.Create(ctx.Context(), formAnswer)
 	if err != nil {
 		return ctx.Status(500).JSON(fiber.Map{
 			"message": "Could not create answer",
 		})
 	}
 
-	return ctx.Status(202).JSON(answer)
+	return ctx.Status(202).JSON(formAnswer)
 }
 
 func (h *AnswerHandler) GetAll(ctx *fiber.Ctx) error {
-	forms, err := h.answerRepo.GetAll(ctx.Context())
+	answers, err := h.answerRepo.GetAll(ctx.Context())
 
 	if err != nil {
 		return ctx.Status(500).JSON(fiber.Map{
@@ -64,18 +60,16 @@ func (h *AnswerHandler) GetAll(ctx *fiber.Ctx) error {
 		})
 	}
 
-	return ctx.Status(200).JSON(forms)
+	return ctx.Status(200).JSON(answers)
 }
 
 func (h *AnswerHandler) GetOne(ctx *fiber.Ctx) error {
-	id, _ := primitive.ObjectIDFromHex(ctx.Params("id"))
-
-	answer, err := h.answerRepo.GetOne(ctx.Context(), id)
+	formAnswer, err := h.answerRepo.GetOne(ctx.Context(), ctx.Params("id"))
 	if err != nil {
 		return ctx.Status(404).JSON(fiber.Map{
 			"message": "Form not found",
 		})
 	}
 
-	return ctx.Status(200).JSON(answer)
+	return ctx.Status(200).JSON(formAnswer)
 }
