@@ -14,6 +14,7 @@ import (
 )
 
 var DB *mongo.Database
+
 const timeoutTime = 10 * time.Second
 
 func InitDB() {
@@ -27,7 +28,7 @@ func InitDB() {
 		os.Getenv("DATABASE_PASS"),
 		os.Getenv("DATABASE_HOST"),
 		os.Getenv("DATABASE_PORT"))
-		
+
 	clientOpts := options.Client().ApplyURI(connectionURI)
 
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutTime)

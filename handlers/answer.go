@@ -36,9 +36,9 @@ func (h *AnswerHandler) Create(ctx *fiber.Ctx) error {
 	}
 
 	formAnswer := domain.Answer{
-		FormID:    formID,
+		FormID:     formID,
 		AnsweredAt: time.Now(),
-		Answers:   answers,
+		Answers:    answers,
 	}
 
 	if !formAnswer.CompatibleWithForm(form) {

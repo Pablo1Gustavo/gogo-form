@@ -25,7 +25,7 @@ func (repo *FormRepository) Create(ctx context.Context, form domain.Form) (domai
 	form.ID = primitive.NewObjectID().Hex()
 
 	modelForm := new(models.Form)
-	
+
 	if err := modelForm.FromEntity(form); err != nil {
 		return form, err
 	}
@@ -75,7 +75,7 @@ func (repo *FormRepository) GetOne(ctx context.Context, id string) (domain.Form,
 	if err != nil {
 		return domain.Form{}, err
 	}
-	
+
 	err = repo.collection.FindOne(ctx, bson.M{"_id": objID}).Decode(&form)
 	if err != nil {
 		return domain.Form{}, err

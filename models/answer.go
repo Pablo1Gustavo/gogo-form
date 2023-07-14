@@ -8,30 +8,30 @@ import (
 )
 
 type Answer struct {
-	ID          primitive.ObjectID	`bson:"_id,omitempty" json:"id,omitempty"`
-	FormID  	primitive.ObjectID 	`bson:"form_id" json:"form_id"`
-	AnsweredAt	time.Time          	`bson:"answered_at" json:"answered_at"`
-	Answers     []interface{}		`bson:"answers" json:"answers"`
+	ID         primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
+	FormID     primitive.ObjectID `bson:"form_id" json:"form_id"`
+	AnsweredAt time.Time          `bson:"answered_at" json:"answered_at"`
+	Answers    []interface{}      `bson:"answers" json:"answers"`
 }
 
 func (a *Answer) ToEntity() domain.Answer {
 	return domain.Answer{
-		ID: 		a.ID.Hex(),
-		FormID: 	a.FormID.Hex(),
+		ID:         a.ID.Hex(),
+		FormID:     a.FormID.Hex(),
 		AnsweredAt: a.AnsweredAt,
-		Answers: 	a.Answers,
+		Answers:    a.Answers,
 	}
 }
 
 func (a *Answer) FromEntity(entity domain.Answer) error {
-    id, err := primitive.ObjectIDFromHex(entity.ID)
-    if err != nil {
-        return err
-    }
+	id, err := primitive.ObjectIDFromHex(entity.ID)
+	if err != nil {
+		return err
+	}
 	formID, err := primitive.ObjectIDFromHex(entity.FormID)
 	if err != nil {
-        return err
-    }
+		return err
+	}
 
 	a.ID = id
 	a.FormID = formID

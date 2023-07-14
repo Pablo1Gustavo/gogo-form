@@ -7,8 +7,8 @@ type Question struct {
 }
 
 type Form struct {
-	ID          string    	`json:"id,omitempty"`
-	Name        string    	`json:"name" validate:"required"`
-	Description string    	`json:"description" validate:"required"`
-	Questions   []Question	`json:"questions" validate:"required,dive"`
+	ID          string     `json:"id,omitempty"`
+	Name        string     `json:"name" validate:"required"`
+	Description string     `json:"description" validate:"required"`
+	Questions   []Question `json:"questions" validate:"required,dive"`
 }

@@ -69,7 +69,7 @@ func (repo *AnswerRepository) GetOne(ctx context.Context, id string) (domain.Ans
 	if err != nil {
 		return domain.Answer{}, err
 	}
-	
+
 	err = repo.collection.FindOne(ctx, bson.M{"_id": objID}).Decode(&answer)
 	if err != nil {
 		return domain.Answer{}, err

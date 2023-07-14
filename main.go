@@ -18,7 +18,7 @@ func main() {
 		formRoutes.Get("", formHandler.GetAll)
 		formRoutes.Get(":id", formHandler.GetOne)
 	}
-	
+
 	answerHandler := handlers.NewAnswerHandler()
 	answerRoutes := app.Group("answer")
 	{

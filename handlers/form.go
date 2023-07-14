@@ -12,13 +12,13 @@ type FormHandler struct {
 	formRepo *repository.FormRepository
 }
 
-func NewFormHandler() FormHandler  {
+func NewFormHandler() FormHandler {
 	return FormHandler{repository.NewFormRepository()}
 }
 
 func (h *FormHandler) Create(ctx *fiber.Ctx) error {
 	form := new(domain.Form)
-	
+
 	if err := ctx.BodyParser(form); err != nil {
 		return ctx.Status(400).JSON(fiber.Map{
 			"message": "Cannot parse JSON",
@@ -28,7 +28,7 @@ func (h *FormHandler) Create(ctx *fiber.Ctx) error {
 	if errors := helpers.ValidateStruct(*form); errors != nil {
 		return ctx.Status(422).JSON(fiber.Map{
 			"message": "Invalid form structure",
-			"errors": errors,
+			"errors":  errors,
 		})
 	}
 
@@ -56,7 +56,7 @@ func (h *FormHandler) GetAll(ctx *fiber.Ctx) error {
 
 func (h *FormHandler) GetOne(ctx *fiber.Ctx) error {
 	form, err := h.formRepo.GetOne(ctx.Context(), ctx.Params("id"))
-	
+
 	if err != nil {
 		return ctx.Status(404).JSON(fiber.Map{
 			"message": "Form not found",
