@@ -26,7 +26,10 @@ func (h *FormHandler) Create(ctx *fiber.Ctx) error {
 	}
 
 	if errors := helpers.ValidateStruct(*form); errors != nil {
-		return ctx.Status(422).JSON(errors)
+		return ctx.Status(422).JSON(fiber.Map{
+			"message": "Invalid form structure",
+			"errors": errors,
+		})
 	}
 
 	_, err := h.formRepo.Create(ctx.Context(), *form)
