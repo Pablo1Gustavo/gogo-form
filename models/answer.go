@@ -14,15 +14,6 @@ type Answer struct {
 	Answers    []interface{}      `bson:"answers" json:"answers"`
 }
 
-func (a *Answer) ToEntity() domain.Answer {
-	return domain.Answer{
-		ID:         a.ID.Hex(),
-		FormID:     a.FormID.Hex(),
-		AnsweredAt: a.AnsweredAt,
-		Answers:    a.Answers,
-	}
-}
-
 func (a *Answer) FromEntity(entity domain.Answer) error {
 	id, err := primitive.ObjectIDFromHex(entity.ID)
 	if err != nil {
@@ -39,4 +30,13 @@ func (a *Answer) FromEntity(entity domain.Answer) error {
 	a.Answers = entity.Answers
 
 	return nil
+}
+
+func (a *Answer) ToEntity() domain.Answer {
+	return domain.Answer{
+		ID:         a.ID.Hex(),
+		FormID:     a.FormID.Hex(),
+		AnsweredAt: a.AnsweredAt,
+		Answers:    a.Answers,
+	}
 }

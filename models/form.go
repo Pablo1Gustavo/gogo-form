@@ -19,24 +19,6 @@ type Form struct {
 	Questions   []Question         `bson:"questions" json:"questions"`
 }
 
-func (f *Form) ToEntity() domain.Form {
-	questions := make([]domain.Question, len(f.Questions))
-	for i, question := range f.Questions {
-		questions[i] = domain.Question{
-			Text:    question.Text,
-			Type:    question.Type,
-			Options: question.Options,
-		}
-	}
-
-	return domain.Form{
-		ID:          f.ID.Hex(),
-		Name:        f.Name,
-		Description: f.Description,
-		Questions:   questions,
-	}
-}
-
 func (f *Form) FromEntity(entity domain.Form) error {
 	id, err := primitive.ObjectIDFromHex(entity.ID)
 	if err != nil {
@@ -56,4 +38,22 @@ func (f *Form) FromEntity(entity domain.Form) error {
 		}
 	}
 	return nil
+}
+
+func (f *Form) ToEntity() domain.Form {
+	questions := make([]domain.Question, len(f.Questions))
+	for i, question := range f.Questions {
+		questions[i] = domain.Question{
+			Text:    question.Text,
+			Type:    question.Type,
+			Options: question.Options,
+		}
+	}
+
+	return domain.Form{
+		ID:          f.ID.Hex(),
+		Name:        f.Name,
+		Description: f.Description,
+		Questions:   questions,
+	}
 }
