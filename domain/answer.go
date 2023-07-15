@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"context"
 	"time"
 )
 
@@ -11,7 +12,15 @@ type Answer struct {
 	Answers    []interface{} `json:"answers"`
 }
 
-func (a *Answer) CompatibleWithForm(form Form) bool {
+type AnswerRepository interface {
+	Create(ctx context.Context, answer Answer) (Answer, error)
+	GetAll(ctx context.Context) ([]Answer, error)
+	GetOne(ctx context.Context, id string) (Answer, error)
+	Update(ctx context.Context, answer Answer, id string) (Answer, error)
+	Delete(ctx context.Context, id string) error
+}
+
+func (a Answer) CompatibleWithForm(form Form) bool {
 	if len(a.Answers) != len(form.Questions) {
 		return false
 	}

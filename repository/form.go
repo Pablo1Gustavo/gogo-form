@@ -16,12 +16,12 @@ type FormRepository struct {
 	collection *mongo.Collection
 }
 
-func NewFormRepository() *FormRepository {
+func NewFormRepository() domain.FormRepository {
 	collection := database.GetCollection("forms")
 	return &FormRepository{collection}
 }
 
-func (repo *FormRepository) Create(ctx context.Context, form domain.Form) (domain.Form, error) {
+func (r *FormRepository) Create(ctx context.Context, form domain.Form) (domain.Form, error) {
 	form.ID = primitive.NewObjectID().Hex()
 
 	modelForm := new(models.Form)
@@ -30,7 +30,7 @@ func (repo *FormRepository) Create(ctx context.Context, form domain.Form) (domai
 		return form, err
 	}
 
-	_, err := repo.collection.InsertOne(ctx, modelForm)
+	_, err := r.collection.InsertOne(ctx, modelForm)
 	if err != nil {
 		return form, err
 	}
@@ -38,13 +38,13 @@ func (repo *FormRepository) Create(ctx context.Context, form domain.Form) (domai
 	return form, nil
 }
 
-func (repo *FormRepository) GetAll(ctx context.Context, name string) ([]domain.Form, error) {
+func (r *FormRepository) GetAll(ctx context.Context, name string) ([]domain.Form, error) {
 	filter := bson.M{}
 	if name != "" {
 		filter["name"] = primitive.Regex{Pattern: name, Options: "i"}
 	}
 
-	cursor, err := repo.collection.Find(ctx, filter)
+	cursor, err := r.collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +68,7 @@ func (repo *FormRepository) GetAll(ctx context.Context, name string) ([]domain.F
 	return forms, nil
 }
 
-func (repo *FormRepository) GetOne(ctx context.Context, id string) (domain.Form, error) {
+func (r *FormRepository) GetOne(ctx context.Context, id string) (domain.Form, error) {
 	var form models.Form
 
 	objID, err := primitive.ObjectIDFromHex(id)
@@ -76,10 +76,18 @@ func (repo *FormRepository) GetOne(ctx context.Context, id string) (domain.Form,
 		return domain.Form{}, err
 	}
 
-	err = repo.collection.FindOne(ctx, bson.M{"_id": objID}).Decode(&form)
+	err = r.collection.FindOne(ctx, bson.M{"_id": objID}).Decode(&form)
 	if err != nil {
 		return domain.Form{}, err
 	}
 
 	return form.ToEntity(), nil
+}
+
+func (r *FormRepository) Update(ctx context.Context, form domain.Form, id string) (domain.Form, error) {
+	return domain.Form{}, nil
+}
+
+func (r *FormRepository) Delete(ctx context.Context, id string) error {
+	return nil
 }

@@ -9,7 +9,7 @@ import (
 )
 
 type FormHandler struct {
-	formRepo *repository.FormRepository
+	formRepo domain.FormRepository
 }
 
 func NewFormHandler() FormHandler {

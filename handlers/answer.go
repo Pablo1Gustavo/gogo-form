@@ -10,7 +10,7 @@ import (
 )
 
 type AnswerHandler struct {
-	answerRepo *repository.AnswerRepository
+	answerRepo domain.AnswerRepository
 }
 
 func NewAnswerHandler() AnswerHandler {
