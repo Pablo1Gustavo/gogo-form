@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"github.com/gofiber/fiber/v2"
+	"github.com/gin-gonic/gin"
 
 	"gogo-form/domain"
 	"gogo-form/helpers"
@@ -16,52 +16,57 @@ func NewFormHandler() FormHandler {
 	return FormHandler{repository.NewFormRepository()}
 }
 
-func (h *FormHandler) Create(ctx *fiber.Ctx) error {
+func (h *FormHandler) Create(ctx *gin.Context) {
 	form := new(domain.Form)
 
-	if err := ctx.BodyParser(form); err != nil {
-		return ctx.Status(400).JSON(fiber.Map{
+	if err := ctx.ShouldBindJSON(form); err != nil {
+		ctx.JSON(400, gin.H{
 			"message": "Cannot parse JSON",
 		})
+		return
 	}
 
 	if errors := helpers.ValidateStruct(*form); errors != nil {
-		return ctx.Status(422).JSON(fiber.Map{
+		ctx.JSON(422, gin.H{
 			"message": "Invalid form structure",
 			"errors":  errors,
 		})
+		return
 	}
 
-	_, err := h.formRepo.Create(ctx.Context(), *form)
+	_, err := h.formRepo.Create(ctx.Request.Context(), *form)
 	if err != nil {
-		return ctx.Status(500).JSON(fiber.Map{
+		ctx.JSON(500, gin.H{
 			"message": "Could not create the form",
 		})
+		return
 	}
 
-	return ctx.Status(202).JSON(form)
+	ctx.JSON(202, form)
 }
 
-func (h *FormHandler) GetAll(ctx *fiber.Ctx) error {
-	forms, err := h.formRepo.GetAll(ctx.Context(), ctx.Query("name"))
+func (h *FormHandler) GetAll(ctx *gin.Context) {
+	forms, err := h.formRepo.GetAll(ctx.Request.Context(), ctx.Query("name"))
 
 	if err != nil {
-		return ctx.Status(500).JSON(fiber.Map{
+		ctx.JSON(500, gin.H{
 			"message": "Unexpected error during get forms",
 		})
+		return
 	}
 
-	return ctx.Status(200).JSON(forms)
+	ctx.JSON(200, forms)
 }
 
-func (h *FormHandler) GetOne(ctx *fiber.Ctx) error {
-	form, err := h.formRepo.GetOne(ctx.Context(), ctx.Params("id"))
+func (h *FormHandler) GetOne(ctx *gin.Context) {
+	form, err := h.formRepo.GetOne(ctx.Request.Context(), ctx.Param("id"))
 
 	if err != nil {
-		return ctx.Status(404).JSON(fiber.Map{
+		ctx.JSON(404, gin.H{
 			"message": "Form not found",
 		})
+		return
 	}
 
-	return ctx.Status(200).JSON(form)
+	ctx.JSON(200, form)
 }

@@ -4,28 +4,28 @@ import (
 	"gogo-form/database"
 	"gogo-form/handlers"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	database.InitDB()
-	app := fiber.New()
+	app := gin.Default()
 
 	formHandler := handlers.NewFormHandler()
-	formRoutes := app.Group("form")
+	formRoutes := app.Group("/form")
 	{
-		formRoutes.Post("", formHandler.Create)
-		formRoutes.Get("", formHandler.GetAll)
-		formRoutes.Get(":id", formHandler.GetOne)
+		formRoutes.POST("", formHandler.Create)
+		formRoutes.GET("", formHandler.GetAll)
+		formRoutes.GET("/:id", formHandler.GetOne)
 	}
 
 	answerHandler := handlers.NewAnswerHandler()
-	answerRoutes := app.Group("answer")
+	answerRoutes := app.Group("/answer")
 	{
-		answerRoutes.Post(":formId", answerHandler.Create)
-		answerRoutes.Get("", answerHandler.GetAll)
-		answerRoutes.Get(":id", answerHandler.GetOne)
+		answerRoutes.POST("/:formId", answerHandler.Create)
+		answerRoutes.GET("", answerHandler.GetAll)
+		answerRoutes.GET("/:id", answerHandler.GetOne)
 	}
 
-	app.Listen(":3000")
+	app.Run(":3000")
 }
