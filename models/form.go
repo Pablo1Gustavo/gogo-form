@@ -20,12 +20,16 @@ type Form struct {
 }
 
 func (f *Form) FromEntity(entity domain.Form) error {
-	id, err := primitive.ObjectIDFromHex(entity.ID)
-	if err != nil {
-		return err
+	if entity.ID == "" {
+		f.ID = primitive.NewObjectID()
+	} else {
+		id, err := primitive.ObjectIDFromHex(entity.ID)
+		if err != nil {
+			return err
+		}
+		f.ID = id
 	}
 
-	f.ID = id
 	f.Name = entity.Name
 	f.Description = entity.Description
 
@@ -37,6 +41,7 @@ func (f *Form) FromEntity(entity domain.Form) error {
 			Options: question.Options,
 		}
 	}
+
 	return nil
 }
 

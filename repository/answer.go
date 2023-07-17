@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"errors"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -26,13 +25,11 @@ func (r *AnswerRepository) Create(ctx context.Context, answer domain.Answer) (do
 	answer.ID = primitive.NewObjectID().Hex()
 
 	modelAnswer := models.Answer{}
-	if err := modelAnswer.FromEntity(answer); err != nil {
-		return answer, err
-	}
+	modelAnswer.FromEntity(answer)
 
 	_, err := r.collection.InsertOne(ctx, modelAnswer)
 	if err != nil {
-		return answer, err
+		return answer, &domain.RequestError{Err: err}
 	}
 
 	return answer, nil
@@ -41,7 +38,7 @@ func (r *AnswerRepository) Create(ctx context.Context, answer domain.Answer) (do
 func (r *AnswerRepository) GetAll(ctx context.Context) ([]domain.Answer, error) {
 	cursor, err := r.collection.Find(ctx, bson.M{})
 	if err != nil {
-		return nil, err
+		return nil, &domain.RequestError{Err: err}
 	}
 	defer cursor.Close(ctx)
 
@@ -51,13 +48,13 @@ func (r *AnswerRepository) GetAll(ctx context.Context) ([]domain.Answer, error) 
 	for cursor.Next(ctx) {
 		err := cursor.Decode(&modelAnswer)
 		if err != nil {
-			return nil, err
+			return nil, &domain.RequestError{Err: err}
 		}
 		answers = append(answers, modelAnswer.ToEntity())
 	}
 
 	if err := cursor.Err(); err != nil {
-		return nil, err
+		return nil, &domain.RequestError{Err: err}
 	}
 
 	return answers, nil
@@ -68,12 +65,12 @@ func (r *AnswerRepository) GetOne(ctx context.Context, id string) (domain.Answer
 
 	objID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		return domain.Answer{}, err
+		return domain.Answer{}, &domain.RequestError{Code: 404, Err: err}
 	}
 
 	err = r.collection.FindOne(ctx, bson.M{"_id": objID}).Decode(&answer)
 	if err != nil {
-		return domain.Answer{}, err
+		return domain.Answer{}, &domain.RequestError{Code: 404, Err: err}
 	}
 
 	return answer.ToEntity(), nil
@@ -82,13 +79,13 @@ func (r *AnswerRepository) GetOne(ctx context.Context, id string) (domain.Answer
 func (r *AnswerRepository) Delete(ctx context.Context, id string) error {
 	objID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		return err
+		return &domain.RequestError{Code: 404, Err: err}
 	}
 
 	result, _ := r.collection.DeleteOne(ctx, bson.M{"_id": objID})
 
 	if result.DeletedCount == 0 {
-		return errors.New("not found")
+		return &domain.RequestError{Code: 404, Err: err}
 	}
 
 	return nil

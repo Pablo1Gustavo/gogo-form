@@ -25,19 +25,14 @@ func (h *FormHandler) Create(ctx *gin.Context) {
 		})
 		return
 	}
-	if errors := helpers.ValidateStruct(form); errors != nil {
-		ctx.JSON(422, gin.H{
-			"message": "Invalid form structure",
-			"errors":  errors,
-		})
+
+	err := helpers.ValidateStruct(form)
+	if helpers.RespondToError(ctx, err) {
 		return
 	}
 
-	_, err := h.formRepo.Create(ctx.Request.Context(), *form)
-	if err != nil {
-		ctx.JSON(500, gin.H{
-			"message": "Could not create the form",
-		})
+	_, err = h.formRepo.Create(ctx.Request.Context(), *form)
+	if helpers.RespondToError(ctx, err) {
 		return
 	}
 
@@ -47,10 +42,7 @@ func (h *FormHandler) Create(ctx *gin.Context) {
 func (h *FormHandler) GetAll(ctx *gin.Context) {
 	forms, err := h.formRepo.GetAll(ctx.Request.Context(), ctx.Query("name"))
 
-	if err != nil {
-		ctx.JSON(500, gin.H{
-			"message": "Unexpected error during get forms",
-		})
+	if helpers.RespondToError(ctx, err) {
 		return
 	}
 
@@ -60,10 +52,7 @@ func (h *FormHandler) GetAll(ctx *gin.Context) {
 func (h *FormHandler) GetOne(ctx *gin.Context) {
 	form, err := h.formRepo.GetOne(ctx.Request.Context(), ctx.Param("id"))
 
-	if err != nil {
-		ctx.JSON(404, gin.H{
-			"message": "Form not found",
-		})
+	if helpers.RespondToError(ctx, err) {
 		return
 	}
 
@@ -79,20 +68,15 @@ func (h *FormHandler) Update(ctx *gin.Context) {
 		})
 		return
 	}
-	if errors := helpers.ValidateStruct(form); errors != nil {
-		ctx.JSON(422, gin.H{
-			"message": "Invalid form structure",
-			"errors":  errors,
-		})
+
+	err := helpers.ValidateStruct(form)
+	if helpers.RespondToError(ctx, err) {
 		return
 	}
 
 	updatedForm, err := h.formRepo.Update(ctx.Request.Context(), *form, ctx.Param("id"))
 
-	if err != nil {
-		ctx.JSON(404, gin.H{
-			"message": "Form not found",
-		})
+	if helpers.RespondToError(ctx, err) {
 		return
 	}
 
@@ -102,10 +86,7 @@ func (h *FormHandler) Update(ctx *gin.Context) {
 func (h *FormHandler) Delete(ctx *gin.Context) {
 	err := h.formRepo.Delete(ctx.Request.Context(), ctx.Param("id"))
 
-	if err != nil {
-		ctx.JSON(404, gin.H{
-			"message": "Form not found",
-		})
+	if helpers.RespondToError(ctx, err) {
 		return
 	}
 

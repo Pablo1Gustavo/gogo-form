@@ -15,16 +15,21 @@ type Answer struct {
 }
 
 func (a *Answer) FromEntity(entity domain.Answer) error {
-	id, err := primitive.ObjectIDFromHex(entity.ID)
-	if err != nil {
-		return err
+	if entity.ID == "" {
+		a.ID = primitive.NewObjectID()
+	} else {
+		id, err := primitive.ObjectIDFromHex(entity.ID)
+		if err != nil {
+			return err
+		}
+		a.ID = id
 	}
+
 	formID, err := primitive.ObjectIDFromHex(entity.FormID)
 	if err != nil {
 		return err
 	}
 
-	a.ID = id
 	a.FormID = formID
 	a.AnsweredAt = entity.AnsweredAt
 	a.Answers = entity.Answers

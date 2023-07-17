@@ -26,14 +26,11 @@ func (r *FormRepository) Create(ctx context.Context, form domain.Form) (domain.F
 	form.ID = primitive.NewObjectID().Hex()
 
 	modelForm := models.Form{}
-
-	if err := modelForm.FromEntity(form); err != nil {
-		return form, err
-	}
+	modelForm.FromEntity(form)
 
 	_, err := r.collection.InsertOne(ctx, modelForm)
 	if err != nil {
-		return form, err
+		return form, &domain.RequestError{Err: err}
 	}
 
 	return form, nil
@@ -47,7 +44,7 @@ func (r *FormRepository) GetAll(ctx context.Context, name string) ([]domain.Form
 
 	cursor, err := r.collection.Find(ctx, filter)
 	if err != nil {
-		return nil, err
+		return nil, &domain.RequestError{Err: err}
 	}
 	defer cursor.Close(ctx)
 
@@ -57,7 +54,7 @@ func (r *FormRepository) GetAll(ctx context.Context, name string) ([]domain.Form
 	for cursor.Next(ctx) {
 		err := cursor.Decode(&modelForm)
 		if err != nil {
-			return nil, err
+			return nil, &domain.RequestError{Err: err}
 		}
 		forms = append(forms, modelForm.ToEntity())
 	}
@@ -74,12 +71,12 @@ func (r *FormRepository) GetOne(ctx context.Context, id string) (domain.Form, er
 
 	objID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		return domain.Form{}, err
+		return domain.Form{}, &domain.RequestError{Code: 404, Err: err}
 	}
 
 	err = r.collection.FindOne(ctx, bson.M{"_id": objID}).Decode(&form)
 	if err != nil {
-		return domain.Form{}, err
+		return domain.Form{}, &domain.RequestError{Code: 404, Err: err}
 	}
 
 	return form.ToEntity(), nil
@@ -90,18 +87,17 @@ func (r *FormRepository) Update(ctx context.Context, form domain.Form, id string
 	modelForm := models.Form{}
 
 	if err := modelForm.FromEntity(form); err != nil {
-		return form, err
+		return form, &domain.RequestError{Code: 404, Err: err}
 	}
 
-	objID, err := primitive.ObjectIDFromHex(id)
+	updateResult := r.collection.FindOneAndUpdate(ctx, bson.M{"_id": modelForm.ID}, bson.M{"$set": modelForm})
+	err := updateResult.Err()
+
 	if err != nil {
-		return domain.Form{}, err
-	}
-
-	updateResult := r.collection.FindOneAndUpdate(ctx, bson.M{"_id": objID}, bson.M{"$set": modelForm})
-
-	if updateResult.Err() != nil {
-		return domain.Form{}, updateResult.Err()
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return form, &domain.RequestError{Code: 404, Err: err}
+		}
+		return form, &domain.RequestError{Err: err}
 	}
 
 	return form, nil
@@ -110,13 +106,13 @@ func (r *FormRepository) Update(ctx context.Context, form domain.Form, id string
 func (r *FormRepository) Delete(ctx context.Context, id string) error {
 	objID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		return err
+		return &domain.RequestError{Code: 404, Err: err}
 	}
 
 	result, _ := r.collection.DeleteOne(ctx, bson.M{"_id": objID})
 
 	if result.DeletedCount == 0 {
-		return errors.New("not found")
+		return &domain.RequestError{Code: 404, Err: err}
 	}
 
 	return nil
