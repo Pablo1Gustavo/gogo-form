@@ -25,8 +25,7 @@ func (h *FormHandler) Create(ctx *gin.Context) {
 		})
 		return
 	}
-
-	if errors := helpers.ValidateStruct(*form); errors != nil {
+	if errors := helpers.ValidateStruct(form); errors != nil {
 		ctx.JSON(422, gin.H{
 			"message": "Invalid form structure",
 			"errors":  errors,
@@ -69,4 +68,33 @@ func (h *FormHandler) GetOne(ctx *gin.Context) {
 	}
 
 	ctx.JSON(200, form)
+}
+
+func (h *FormHandler) Update(ctx *gin.Context) {
+	form := new(domain.Form)
+
+	if err := ctx.ShouldBindJSON(form); err != nil {
+		ctx.JSON(400, gin.H{
+			"message": "Cannot parse JSON",
+		})
+		return
+	}
+	if errors := helpers.ValidateStruct(form); errors != nil {
+		ctx.JSON(422, gin.H{
+			"message": "Invalid form structure",
+			"errors":  errors,
+		})
+		return
+	}
+
+	updatedForm, err := h.formRepo.Update(ctx.Request.Context(), *form, ctx.Param("id"))
+
+	if err != nil {
+		ctx.JSON(404, gin.H{
+			"message": "Form not found",
+		})
+		return
+	}
+
+	ctx.JSON(200, updatedForm)
 }

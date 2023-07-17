@@ -85,7 +85,25 @@ func (r *FormRepository) GetOne(ctx context.Context, id string) (domain.Form, er
 }
 
 func (r *FormRepository) Update(ctx context.Context, form domain.Form, id string) (domain.Form, error) {
-	return domain.Form{}, nil
+	form.ID = id
+	modelForm := models.Form{}
+
+	if err := modelForm.FromEntity(form); err != nil {
+		return form, err
+	}
+
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return domain.Form{}, err
+	}
+
+	updateResult := r.collection.FindOneAndUpdate(ctx, bson.M{"_id": objID}, bson.M{"$set": modelForm})
+
+	if updateResult.Err() != nil {
+		return domain.Form{}, updateResult.Err()
+	}
+
+	return form, nil
 }
 
 func (r *FormRepository) Delete(ctx context.Context, id string) error {

@@ -17,6 +17,7 @@ func main() {
 		formRoutes.POST("", formHandler.Create)
 		formRoutes.GET("", formHandler.GetAll)
 		formRoutes.GET("/:id", formHandler.GetOne)
+		formRoutes.PUT("/:id", formHandler.Update)
 	}
 
 	answerHandler := handlers.NewAnswerHandler()
