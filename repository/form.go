@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -24,7 +25,7 @@ func NewFormRepository() domain.FormRepository {
 func (r *FormRepository) Create(ctx context.Context, form domain.Form) (domain.Form, error) {
 	form.ID = primitive.NewObjectID().Hex()
 
-	modelForm := new(models.Form)
+	modelForm := models.Form{}
 
 	if err := modelForm.FromEntity(form); err != nil {
 		return form, err
@@ -107,5 +108,16 @@ func (r *FormRepository) Update(ctx context.Context, form domain.Form, id string
 }
 
 func (r *FormRepository) Delete(ctx context.Context, id string) error {
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return err
+	}
+
+	result, _ := r.collection.DeleteOne(ctx, bson.M{"_id": objID})
+
+	if result.DeletedCount == 0 {
+		return errors.New("not found")
+	}
+
 	return nil
 }

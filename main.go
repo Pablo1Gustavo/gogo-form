@@ -16,16 +16,17 @@ func main() {
 	{
 		formRoutes.POST("", formHandler.Create)
 		formRoutes.GET("", formHandler.GetAll)
-		formRoutes.GET("/:id", formHandler.GetOne)
-		formRoutes.PUT("/:id", formHandler.Update)
+		formRoutes.GET(":id", formHandler.GetOne)
+		formRoutes.PUT(":id", formHandler.Update)
+		formRoutes.DELETE(":id", formHandler.Delete)
 	}
 
 	answerHandler := handlers.NewAnswerHandler()
 	answerRoutes := app.Group("/answer")
 	{
-		answerRoutes.POST("/:formId", answerHandler.Create)
+		answerRoutes.POST(":formId", answerHandler.Create)
 		answerRoutes.GET("", answerHandler.GetAll)
-		answerRoutes.GET("/:id", answerHandler.GetOne)
+		answerRoutes.GET(":id", answerHandler.GetOne)
 	}
 
 	app.Run(":3000")

@@ -98,3 +98,18 @@ func (h *FormHandler) Update(ctx *gin.Context) {
 
 	ctx.JSON(200, updatedForm)
 }
+
+func (h *FormHandler) Delete(ctx *gin.Context) {
+	err := h.formRepo.Delete(ctx.Request.Context(), ctx.Param("id"))
+
+	if err != nil {
+		ctx.JSON(404, gin.H{
+			"message": "Form not found",
+		})
+		return
+	}
+
+	ctx.JSON(200, gin.H{
+		"message": "Form successfully deleted",
+	})
+}
