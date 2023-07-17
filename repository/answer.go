@@ -78,10 +78,6 @@ func (r *AnswerRepository) GetOne(ctx context.Context, id string) (domain.Answer
 	return answer.ToEntity(), nil
 }
 
-func (r *AnswerRepository) Update(ctx context.Context, answer domain.Answer, id string) (domain.Answer, error) {
-	return domain.Answer{}, nil
-}
-
 func (r *AnswerRepository) Delete(ctx context.Context, id string) error {
 	return nil
 }
