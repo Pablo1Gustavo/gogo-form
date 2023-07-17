@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -79,5 +80,16 @@ func (r *AnswerRepository) GetOne(ctx context.Context, id string) (domain.Answer
 }
 
 func (r *AnswerRepository) Delete(ctx context.Context, id string) error {
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return err
+	}
+
+	result, _ := r.collection.DeleteOne(ctx, bson.M{"_id": objID})
+
+	if result.DeletedCount == 0 {
+		return errors.New("not found")
+	}
+
 	return nil
 }

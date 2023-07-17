@@ -86,3 +86,18 @@ func (h *AnswerHandler) GetOne(ctx *gin.Context) {
 
 	ctx.JSON(200, formAnswer)
 }
+
+func (h *AnswerHandler) Delete(ctx *gin.Context) {
+	err := h.answerRepo.Delete(ctx.Request.Context(), ctx.Param("id"))
+
+	if err != nil {
+		ctx.JSON(404, gin.H{
+			"message": "Answer not found",
+		})
+		return
+	}
+
+	ctx.JSON(200, gin.H{
+		"message": "Answer successfully deleted",
+	})
+}

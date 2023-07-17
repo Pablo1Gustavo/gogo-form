@@ -12,6 +12,8 @@ func main() {
 	app := gin.Default()
 
 	formHandler := handlers.NewFormHandler()
+	answerHandler := handlers.NewAnswerHandler()
+
 	formRoutes := app.Group("/form")
 	{
 		formRoutes.POST("", formHandler.Create)
@@ -19,14 +21,14 @@ func main() {
 		formRoutes.GET(":id", formHandler.GetOne)
 		formRoutes.PUT(":id", formHandler.Update)
 		formRoutes.DELETE(":id", formHandler.Delete)
-	}
 
-	answerHandler := handlers.NewAnswerHandler()
+		formRoutes.POST(":formId/answer", answerHandler.Create)
+	}
 	answerRoutes := app.Group("/answer")
 	{
-		answerRoutes.POST(":formId", answerHandler.Create)
 		answerRoutes.GET("", answerHandler.GetAll)
 		answerRoutes.GET(":id", answerHandler.GetOne)
+		answerRoutes.DELETE(":id", answerHandler.Delete)
 	}
 
 	app.Run(":3000")
