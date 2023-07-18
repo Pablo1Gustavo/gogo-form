@@ -15,13 +15,13 @@ func RespondToError(ctx *gin.Context, err error) bool {
 	var obj gin.H
 
 	switch requestError.Code {
-	case 0:
-		requestError.Code = 500
-		obj = gin.H{"message": "Unexpected server error"}
 	case 404:
 		obj = gin.H{"message": "Resource not found"}
 	case 422:
 		obj = gin.H{"message": "Invalid structure", "errors": requestError.Details}
+	default:
+		requestError.Code = 500
+		obj = gin.H{"message": "Unexpected server error"}
 	}
 
 	ctx.JSON(requestError.Code, obj)
