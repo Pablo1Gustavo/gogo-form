@@ -3,11 +3,17 @@ package main
 import (
 	"gogo-form/database"
 	"gogo-form/handlers"
+	"log"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+
 	database.InitDB()
 	app := gin.Default()
 

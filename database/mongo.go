@@ -9,8 +9,6 @@ import (
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-
-	"github.com/joho/godotenv"
 )
 
 var DB *mongo.Database
@@ -18,10 +16,7 @@ var DB *mongo.Database
 const timeoutTime = 10 * time.Second
 
 func InitDB() {
-	if err := godotenv.Load(); err != nil {
-		log.Fatalf("Error loading .env file")
-	}
-
+	// Requires set env variables
 	connectionURI := fmt.Sprintf(
 		"mongodb://%s:%s@%s:%s",
 		os.Getenv("DATABASE_USER"),
