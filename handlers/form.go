@@ -36,7 +36,7 @@ func (h *FormHandler) Create(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(202, form)
+	ctx.JSON(201, form)
 }
 
 func (h *FormHandler) GetAll(ctx *gin.Context) {
