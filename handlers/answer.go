@@ -28,7 +28,7 @@ func (h *AnswerHandler) Create(ctx *gin.Context) {
 		return
 	}
 
-	formID := ctx.Param("formId")
+	formID := ctx.Param("id")
 
 	form, err := repository.NewFormRepository().GetOne(ctx.Request.Context(), formID)
 	if helpers.RespondToError(ctx, err) {
@@ -57,7 +57,7 @@ func (h *AnswerHandler) Create(ctx *gin.Context) {
 }
 
 func (h *AnswerHandler) GetAll(ctx *gin.Context) {
-	answers, err := h.answerRepo.GetAll(ctx.Request.Context())
+	answers, err := h.answerRepo.GetAll(ctx.Request.Context(), ctx.Param("id"))
 
 	if helpers.RespondToError(ctx, err) {
 		return

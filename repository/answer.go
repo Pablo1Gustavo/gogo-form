@@ -35,8 +35,14 @@ func (r *AnswerRepository) Create(ctx context.Context, answer domain.Answer) (do
 	return answer, nil
 }
 
-func (r *AnswerRepository) GetAll(ctx context.Context) ([]domain.Answer, error) {
-	cursor, err := r.collection.Find(ctx, bson.M{})
+func (r *AnswerRepository) GetAll(ctx context.Context, formId string) ([]domain.Answer, error) {
+	filter := bson.M{}
+	if formId != "" {
+		objFormId, _ := primitive.ObjectIDFromHex(formId)
+		filter["form_id"] = objFormId
+	}
+
+	cursor, err := r.collection.Find(ctx, filter)
 	if err != nil {
 		return nil, &domain.RequestError{Err: err}
 	}

@@ -14,7 +14,7 @@ type Answer struct {
 
 type AnswerRepository interface {
 	Create(ctx context.Context, answer Answer) (Answer, error)
-	GetAll(ctx context.Context) ([]Answer, error)
+	GetAll(ctx context.Context, formId string) ([]Answer, error)
 	GetOne(ctx context.Context, id string) (Answer, error)
 	Delete(ctx context.Context, id string) error
 }

@@ -22,7 +22,8 @@ func main() {
 		formRoutes.PUT(":id", formHandler.Update)
 		formRoutes.DELETE(":id", formHandler.Delete)
 
-		formRoutes.POST(":formId/answer", answerHandler.Create)
+		formRoutes.GET(":id/answer", answerHandler.GetAll)
+		formRoutes.POST(":id/answer", answerHandler.Create)
 	}
 	answerRoutes := app.Group("/answer")
 	{
