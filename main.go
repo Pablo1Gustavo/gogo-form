@@ -38,5 +38,6 @@ func main() {
 		answerRoutes.DELETE(":id", answerHandler.Delete)
 	}
 
-	app.Run(":3000")
+	log.Println("Starting server on :8080")
+	app.Run(":8080")
 }
