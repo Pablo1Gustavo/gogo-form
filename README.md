@@ -17,8 +17,8 @@ OR
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/gogo-form-api.git
-   cd gogo-form-api
+   git clone git@github.com:ufrn-golang/trabalho-3-desenvolvimento-de-api-restful-team-pablo-api.git gogo-form
+   cd gogo-form
    ```
 2. Install the dependencies:
     ```bash
