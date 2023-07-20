@@ -8,7 +8,7 @@ This is a simple API project built with Go language that provides functionalitie
 ## Getting Started
 
 ### Prerequisites
-* Go 1.10
+* Go 1.20
 * MongoDB
 OR
 * Docker
