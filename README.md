@@ -23,7 +23,11 @@ Or just docker-compose
     ```bash
     go mod download
     ```
-3. Run the application
+3. Create a .env file and set your configuration:
+    ```bash
+    cp .env.example .env
+    ```
+4. Run the application
     ```bash
     go run main.go
     ```
