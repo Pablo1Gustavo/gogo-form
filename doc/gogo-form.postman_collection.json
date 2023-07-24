@@ -1,0 +1,252 @@
+{
+	"info": {
+		"_postman_id": "f06527f8-2476-4c3c-9ace-9599e3d15b8c",
+		"name": "gogo-form",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "form",
+			"item": [
+				{
+					"name": "get all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/form",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"form"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"gin gonic\",\r\n    \"description\": \"description gin\",\r\n    \"questions\": [\r\n        {\r\n            \"text\": \"question 1\",\r\n            \"type\": \"text\"\r\n        },\r\n        {\r\n            \"text\": \"question 2\",\r\n            \"type\": \"booleana\"\r\n        },\r\n        {\r\n            \"text\": \"choice one\",\r\n            \"type\": \"option\",\r\n            \"options\": [\"option 1\", \"option 2\", \"wow\"]\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/form",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"form"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get one",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/form/64af23e684ee7d63f651bdca",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"form",
+								"64af23e684ee7d63f651bdca"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"blaaa\",\r\n    \"name\": \"like other updated\",\r\n    \"description\": \"description 2\",\r\n    \"questions\": [\r\n        {\r\n            \"text\": \"question 1\",\r\n            \"type\": \"text\"\r\n        },\r\n        {\r\n            \"text\": \"question 2\",\r\n            \"type\": \"boolean\"\r\n        },\r\n        {\r\n            \"text\": \"choice one\",\r\n            \"type\": \"option\",\r\n            \"options\": [\r\n                \"option 1\",\r\n                \"option 2\"\r\n            ]\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/form/64af23e684ee7d63f651bdca",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"form",
+								"64af23e684ee7d63f651bdca"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/form/64b48d50eafed89275d2ec06",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"form",
+								"64b48d50eafed89275d2ec06"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get form answers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/form/64b1b8febf3cc07978ae74a7/answer",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"form",
+								"64b1b8febf3cc07978ae74a7",
+								"answer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "answer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\"answer\", false, \"option 2\"]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/form/64b1b8febf3cc07978ae74a7/answer",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"form",
+								"64b1b8febf3cc07978ae74a7",
+								"answer"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "answer",
+			"item": [
+				{
+					"name": "get all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/answer",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"answer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get one",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/answer/64af2904135a8b5c613965c9",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"answer",
+								"64af2904135a8b5c613965c9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/answer/64af240284ee7d63f651bdcc",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"answer",
+								"64af240284ee7d63f651bdcc"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "http://localhost:8080",
+			"type": "default"
+		}
+	]
+}

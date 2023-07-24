@@ -1,0 +1,69 @@
+@startuml
+allow_mixing
+title Gogo-Form
+
+package Domain {
+    struct Question {
+    	string Text
+    	string Type    
+    	[]string Options
+    }
+
+    struct Form {
+    	string ID 
+    	string Name
+    	string Description
+    	[]Question Questions
+
+    }
+
+    struct Answer {
+      string ID
+      string FormID
+      time.Time AnsweredAt
+      []any Answers
+      --
+      bool CompatibleWithForm(form Form)
+    }
+
+    interface FormRepository {
+    	(Form, error) Create(ctx context.Context, form Form)
+    	([]Form, error) GetAll(ctx context.Context, name string)
+    	(Form, error) GetOne(ctx context.Context, id string)
+    	(Form, error) Update(ctx context.Context, form Form, id string)
+    	error Delete(ctx context.Context, id string)
+    }
+
+    interface AnswerRepository {
+    	(Answer, error) Create(ctx context.Context, answer Answer)
+    	([]Answer, error) GetAll(ctx context.Context, formId string)
+    	(Answer, error) GetOne(ctx context.Context, id string)
+    	error Delete(ctx context.Context, id string)
+    }
+}
+
+package App {
+    database AnswerModel #C8E6C9
+    database FormModel #C8E6C9
+    database MongoDB #81C784
+
+    collections AnswerHandler #E1BEE7
+    collections FormHandler #E1BEE7
+}
+
+FormRepository <-- Form
+AnswerRepository <-- Answer
+
+Question o- Form
+Form o- Answer
+
+FormRepository o-- FormHandler
+AnswerRepository o-- AnswerHandler
+
+MongoDB . FormModel
+MongoDB . AnswerModel
+
+Form <-- FormModel
+Answer <-- AnswerModel
+
+@enduml
