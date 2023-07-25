@@ -49,6 +49,8 @@ package App {
 
     collections AnswerHandler #E1BEE7
     collections FormHandler #E1BEE7
+
+    collections Gin #81D4FA
 }
 
 FormRepository <-- Form
@@ -59,6 +61,9 @@ Form o- Answer
 
 FormRepository o-- FormHandler
 AnswerRepository o-- AnswerHandler
+
+Gin . FormHandler
+Gin . AnswerHandler
 
 MongoDB . FormModel
 MongoDB . AnswerModel
